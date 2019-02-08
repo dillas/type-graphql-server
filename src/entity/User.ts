@@ -39,7 +39,7 @@ export class User extends BaseEntity {
   confirmed: boolean;
 
   @Field()
-  @Column()
+  @Column("bool", { default: true })
   isActive: boolean;
 
   @CreateDateColumn()
