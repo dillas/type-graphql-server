@@ -4,23 +4,15 @@ import cors from "cors";
 import Express from "express";
 import session from "express-session";
 import "reflect-metadata";
-import { buildSchema, formatArgumentValidationError } from "type-graphql";
+import { formatArgumentValidationError } from "type-graphql";
 import { createConnection } from "typeorm";
 import { redis } from "./redis";
+import { createSchema } from "./utils/createSchema";
 
 const main = async () => {
   await createConnection();
 
-  const schema = await buildSchema({
-    resolvers: [__dirname + "/modules/**/*.ts"],
-    authChecker: ({ context: { req } }) => {
-      // here you can read user from context
-      // and check his permission in db against `roles` argument
-      // that comes from `@Authorized`, eg. ["ADMIN", "MODERATOR"]
-
-      return !!req.session.userId;
-    }
-  });
+  const schema = await createSchema();
 
   const apolloServer = new ApolloServer({
     schema,
